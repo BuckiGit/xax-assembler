@@ -1,0 +1,8 @@
+add:00
+sub:01
+mul:02
+div:03
+grt:04
+lss:05
+equ:06
+jmp:07
