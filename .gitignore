@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 .vs/
+.vscode/
 wheels/
 share/python-wheels/
 *.egg-info/
