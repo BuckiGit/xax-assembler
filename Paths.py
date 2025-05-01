@@ -13,7 +13,3 @@ def files_path(relative_path:str) -> str:
     :return: mainpath/files joined with relative path
      """
     return main_path('/files' + ('/' if not relative_path.startswith('/') else '') + relative_path)
-
-input_path:str = files_path('input.txt')
-output_path:str = files_path('output.txt')
-instruction_path:str = files_path('instructions.txt')
