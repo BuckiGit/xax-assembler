@@ -1,6 +1,19 @@
 from os import path
 
-main_path:str = path.dirname(__file__)
-input_path:str = main_path + "/input.txt"
-output_path:str = main_path + "/output.txt"
-instruction_path:str = main_path + "/files/instructions.txt"
+main_path_string:str = path.dirname(__file__)
+
+def main_path(relative_path:str) -> str:
+    """ Resolves target path from relative path
+    :return: mainpath joined with relative path
+     """
+    return main_path_string + ('/' if not relative_path.startswith('/') else '') + relative_path
+    
+def files_path(relative_path:str) -> str:
+    """ Resolves target path from relative path
+    :return: mainpath/files joined with relative path
+     """
+    return main_path('/files' + ('/' if not relative_path.startswith('/') else '') + relative_path)
+
+input_path:str = files_path('input.txt')
+output_path:str = files_path('output.txt')
+instruction_path:str = files_path('instructions.txt')
