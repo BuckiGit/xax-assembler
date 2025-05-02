@@ -1,1 +1,4 @@
-InstructionReader.py
+Lines.py
+    class Line
+        - add documentation to class
+        - add documentation to line_to_hex()
