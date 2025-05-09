@@ -1,3 +1,14 @@
+; faulty lines for error testing
+add 00 03
+Sub 01 02
+mult 02 01
+div 
+grt 00 07
+lss 02 
+equ FF 03
+jmp [00] 03
+
+; original testcode
 add 00 03
 sub 01 02
 mul 02 01
