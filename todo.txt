@@ -1,4 +1,3 @@
 Lines.py
     class Line
         - REWRITE ERROR CHECK
-        - rework error output

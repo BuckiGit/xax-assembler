@@ -1,4 +1,4 @@
-import InstructionReader, ValueConverter
+import InstructionReader, ValueConverter, Errors
 
 class Line:
     """
@@ -15,13 +15,13 @@ class Line:
     """
     def __init__(self, index: int, line:str) -> object:
         """
-        :param line: the line of code the object will represent
-        
-        :returns: Line object
+            :param line: the line of code the object will represent
+            
+            :returns: Line object
         """
         self.index:int = index
         self.line:str = line
-        self.errors:list[str] = []
+        self.errors:list[tuple[Errors.ErrorTypes, str]] = []
 
     def line_to_hex(self) -> str:
         """
@@ -29,7 +29,7 @@ class Line:
 
             Note: Format: hex( 0000_00_00 ) ; hex( < instruction > < register 1 > < register 2 > )
 
-            :return: Hexadecimal value (starting with "0x")
+            :returns: Hexadecimal value (starting with "0x")
         """
         instruction, register1, register2 = self.line.split(';')[0].split(' ')[0:3]
 
@@ -51,50 +51,51 @@ class Line:
         input_line = self.line.split(';')[0].split(' ')[0:3]
 
         if len(input_line) < 3:
-            self.errors.append('Not enough values')
+            self.errors.append((Errors.ErrorTypes.NOT_ENOUGH_VALUES, ''))
         
         try:
             instruction = input_line[0]
         except:
-            self.errors.append(f"{instruction}: No instruction")
+            self.errors.append((Errors.ErrorTypes.NO_INSTUCTION, ''))
         
         try:
             register1 = input_line[1]
         except:
-            self.errors.append(f"{register1}: No register 1")
+            self.errors.append((Errors.ErrorTypes.NO_REGISTER, f"{register1}"))
         
         try:
             register2 = input_line[2] 
         except:
-            self.errors.append(f"{register2}: No register 2")
+            self.errors.append((Errors.ErrorTypes.NO_REGISTER, f"{register2}"))
 
         try:
             if not instruction in InstructionReader.get_instruction_set().keys():
-                self.errors.append(f"{instruction}: Unknown instruction")
+                self.errors.append((Errors.ErrorTypes.UNKNOWN_INSTRUCTION, f"{instruction}"))
         except:
-            self.errors.append(f"{instruction}: Unknown instruction")
+            self.errors.append((Errors.ErrorTypes.UNKNOWN_INSTRUCTION, f"{instruction}"))
         
         try: 
             if not instruction == instruction.lower():
-                self.errors.append(f"{instruction}: Non-lowercase instruction")
+                self.errors.append((Errors.ErrorTypes.NON_LOWERCASE_INSTRUCTION, f"{instruction}"))
         except:
-            self.errors.append(f"{instruction}: Non-lowercase instruction")
+            self.errors.append((Errors.ErrorTypes.NON_LOWERCASE_INSTRUCTION, f"{instruction}"))
 
         try:
             if not (0 <= int(register1, 16) <= 3):
-                self.errors.append(f"{register1}: Invalid register number")
+                self.errors.append((Errors.ErrorTypes.INVALID_REGISTER_NUMBER, f"{register1}"))
         except: 
-            self.errors.append(f"{register1}: Invalid register number")
+            self.errors.append((Errors.ErrorTypes.INVALID_REGISTER_NUMBER, f"{register1}"))
 
         try:
             if not (0 <= int(register2, 16) <= 3):
-                self.errors.append(f"{register2}: Invalid register number")
+                self.errors.append((Errors.ErrorTypes.INVALID_REGISTER_NUMBER, f"{register2}"))
         except: 
-            self.errors.append(f"{register2}: Invalid register number")
+            self.errors.append((Errors.ErrorTypes.INVALID_REGISTER_NUMBER, f"{register2}"))
 
         if len(self.errors) != 0:
-            # [!!!]
-            # [/!\\]
+            # Differentiate errors with "prefixes?" (e.g.: "| [!!!] <Token> <Message>!")
+            # [!!!] for genuine, codebreaking errors (red)
+            # [/!\\] for oversights, such as "too many arguments" (useless arguments could be ignored) (yellow)
             print(f"\nLine {self.index}: {self.line}")
-            for error in self.errors:
-                print(f"| {error}")
+            for error_data in self.errors:
+                error_data[0].value.print_error(error_data[1])
