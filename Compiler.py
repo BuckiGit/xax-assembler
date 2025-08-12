@@ -1,3 +1,7 @@
+import InstructionReader
+import Paths
+from ConfigManager import ConfigManager
+
 #*************************#
 # Options / Customization #
 #.........................#
@@ -17,6 +21,8 @@ add 00 ; failing line - not enough values
 add ; failing line - not enough values
 """
 
+config:ConfigManager = ConfigManager()
+
 """
 every character after the commentChar is cut out on parsing
 lines structured like: "add 00 01 ; <-- this is the commentChar"
@@ -24,18 +30,7 @@ lines structured like: "add 00 01 ; <-- this is the commentChar"
 commentChar = ';'
 
 
-"""
-add instructions if needed, following the pattern
-"instruction" : "binary code"
-"""
-instructions = {
-    "add" : "0000",
-    "sub" : "0001",
-    "lss" : "0010", # less than
-    "grt" : "0011", # greater than
-    "equ" : "0100", # equal too
-}
-
+instructions:dict[str,str] = InstructionReader.get_instruction_set()
 
 """
 header taken from comparison file
@@ -80,7 +75,7 @@ class LineError:
 class Line:
     def __init__(self, line: str, index: int) -> object:
         # newline gets removed upon instanciation
-        self.line: str = line.replace('\n', '')
+        self.line: str = line.removesuffix('\n')
         self.splitLine = self.line.split(commentChar)[0].split(' ')
         self.index: int = index
 
@@ -180,12 +175,12 @@ if __name__ == "__main__":
     failedLines = [] # list(tuple((int, str)))
     hexByteArray = [] # list(str)
 
-    with open(f"{path}\input.txt", 'r') as inFile:
+    with open(Paths.files_path('input.txt'), 'r') as inFile:
         lines = list(inFile)
 
-    for idx, line in enumerate(lines):
-        if idx != 0: break
-        l = Line(line, idx)
+    for index, line in enumerate(lines):
+        if index != 0: break
+        l = Line(line, index)
         # l.decodeLine()
         print(l.decodeValue(l.splitLine, 0))
         print(l.decodeValue(l.splitLine, 1))

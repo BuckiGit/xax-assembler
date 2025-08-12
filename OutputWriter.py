@@ -22,6 +22,7 @@ def format_output_string(byte_list:list[str], header:bool=None, line_count:bool=
     for byte in byte_list:
         pass
     
+    print(byte_list)
     pass
 
 def write_output_file(content: str) -> None:
