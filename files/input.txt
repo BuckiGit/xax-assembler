@@ -1,3 +1,5 @@
-equ 00 03; testcomment
-sub 03 01
-add 03 00
+inp 0 4
+inp 1 6
+sub 1 0
+add 0 3; testcomment
+add 3 0

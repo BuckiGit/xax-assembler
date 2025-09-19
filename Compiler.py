@@ -1,6 +1,8 @@
-import InstructionReader
+import OutputWriter
+from InstructionReader import InstructionReader
 import Paths
 from ConfigManager import ConfigManager
+from instructions.Instruction import Instruction
 
 #*************************#
 # Options / Customization #
@@ -30,7 +32,7 @@ lines structured like: "add 00 01 ; <-- this is the commentChar"
 commentChar = ';'
 
 
-instructions:dict[str,str] = InstructionReader.get_instruction_set()
+instruction_set:dict[str, type[Instruction]] = InstructionReader.get_instruction_set(config)
 
 """
 header taken from comparison file
@@ -73,10 +75,10 @@ class LineError:
         return f"Missing value at index {index}"
 
 class Line:
-    def __init__(self, line: str, index: int) -> object:
+    def __init__(self, line: str, index: int):
         # newline gets removed upon instanciation
         self.line: str = line.removesuffix('\n')
-        self.splitLine = self.line.split(commentChar)[0].split(' ')
+        self.splitLine:list[str] = self.line.split(commentChar)[0].split(' ')
         self.index: int = index
 
         self.instructionRaw: str | None = None
@@ -87,7 +89,7 @@ class Line:
         self.value1: str | None = None
         self.value2: str | None = None
 
-        self.hexValue: str = None
+        self.hexValue: str|None = None
         self.errors = [] # list(tuple((str, str))))
 
 ###########
@@ -96,7 +98,7 @@ class Line:
         if filler == None:
             filler = "00"
         
-        value = None
+        value:str|None = None
         
         try:
             value: str = valueList[index]
@@ -169,17 +171,33 @@ class Line:
 
 #***********************************************************************#
 
+def to_instruction(line: str) -> Instruction:
+    cleaned_line:str = line.removesuffix('\n')
+    line_without_comment:list[str] = cleaned_line.split(commentChar)[0].split(' ')
+    new_instruction:Instruction = instruction_set[line_without_comment[0]](
+        int(line_without_comment[1]),
+        int(line_without_comment[2]))
+    return new_instruction
+
 if __name__ == "__main__":
     path = path.dirname(__file__)
-    lines = [] # list(str)
+    lines:list[tuple[int, str]]
     failedLines = [] # list(tuple((int, str)))
     hexByteArray = [] # list(str)
+    parsed_instructions:list[Instruction] = []
+    config_manager:ConfigManager = ConfigManager()
+    instructions = InstructionReader.get_instruction_set(config_manager)
+
 
     with open(Paths.files_path('input.txt'), 'r') as inFile:
-        lines = list(inFile)
+        lines = list(enumerate(inFile.read().split('\n')))
 
-    for index, line in enumerate(lines):
-        if index != 0: break
+    for index, line in lines:
+        instruction = to_instruction(line)
+        parsed_instructions.append(instruction)
+        print(instruction)
+        continue
+        instruction_type = instruction_set[line.split(' ')[0]]
         l = Line(line, index)
         # l.decodeLine()
         print(l.decodeValue(l.splitLine, 0))
@@ -187,6 +205,9 @@ if __name__ == "__main__":
         print(l.decodeValue(l.splitLine, 2))
         # l.testInstruction()
         l.printErrors()
+    compiled_instructions:list[list[str]] = [ins.compile() for ins in parsed_instructions]
+    compiled_string:str = OutputWriter.format_output_string(compiled_instructions)
+    OutputWriter.write_output_file(compiled_string)
     exit()
 
     # print("Compiling...")
@@ -249,7 +270,7 @@ if __name__ == "__main__":
         if len(hexByteArray) < 256:
             hexByteArray.extend((256 - len(hexByteArray)) * ["00"])
 
-        with open(f"{path}\output.txt") as outFile:
+        with open(f"{path}\\output.txt") as outFile:
             # TODO
             pass
 
