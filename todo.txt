@@ -1,1 +1,3 @@
-InstructionReader.py
+Lines.py
+    class Line
+        - REWRITE ERROR CHECK
