@@ -8,6 +8,5 @@ class MultiplyInstruction(Instruction):
 
     CONFIGURATION_NAME:str = 'Multiply Instruction'
 
-
-    def __init__(self, register_a:int, register_b:int):
-        super().__init__(MultiplyInstruction.INSTRUCTION_ID, register_a, register_b)
+    def __str__(self):
+        return f"instructions.MultiplyInstruction({self.register_a}, {self.register_b})"

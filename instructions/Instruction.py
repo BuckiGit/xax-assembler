@@ -14,8 +14,7 @@ class Instruction:
     INSTRUCTION_ID:int
     INSTRUCTION_ASSEMBLER_KEYWORD:str
 
-    def __init__(self, instruction_id:int, register_a:int, register_b:int):
-        self.instruction_id:int = instruction_id
+    def __init__(self, register_a:int, register_b:int):
         self.register_a:int = register_a
         self.register_b:int = register_b
 

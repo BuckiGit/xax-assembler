@@ -1,5 +1,11 @@
-inp 0 4
-inp 1 6
-sub 1 0
-add 0 3; testcomment
-add 3 0
+pss 0 0
+inc 0 0; increment loop counter
+cpy 0 1
+inp 2 3; set repeat limit
+lss 1 2; compare loop counter and repeat limit
+inp 2 7
+mul 2 1
+inp 3 6
+sub 3 2
+jmp 3 0
+inp 0 0

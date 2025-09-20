@@ -173,10 +173,10 @@ class Line:
 
 def to_instruction(line: str) -> Instruction:
     cleaned_line:str = line.removesuffix('\n')
-    line_without_comment:list[str] = cleaned_line.split(commentChar)[0].split(' ')
-    new_instruction:Instruction = instruction_set[line_without_comment[0]](
-        int(line_without_comment[1]),
-        int(line_without_comment[2]))
+    command_components:list[str] = cleaned_line.split(commentChar)[0].split(' ')
+    new_instruction:Instruction = instruction_set[command_components[0]](
+        int(command_components[1]),
+        int(command_components[2]))
     return new_instruction
 
 if __name__ == "__main__":
